@@ -11,6 +11,7 @@ const restartBtn = document.getElementById("restart-btn");
 let currentQuestionIndex = 0;
 let score = 0;
 let questions = [];
+let correctAnswers = [];
 
 async function fetchQuestions() {
     try {
@@ -29,7 +30,7 @@ async function fetchQuestions() {
 
 function startQuiz() {
     currentQuestionIndex = 0;
-    score = 0;
+    score = [];
     resultContainer.classList.add("hidden");
     questionContainer.classList.remove("hidden");
     nextBtn.classList.add("hidden");
@@ -42,11 +43,30 @@ function showQuestion() {
     questionElement.innerHTML = currentQuestion.question;
     progressText.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
     progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+    let selectedAnswerId;
 
-    currentQuestion.answers.forEach((answer) => {
+    currentQuestion.answers.forEach((answer,index) => {
         const li = document.createElement("li");
         li.textContent = answer;
-        li.addEventListener("click", () => selectAnswer(li, answer === currentQuestion.correct));
+        const itemId = 'answer'+index;
+        li.id = itemId
+        li.addEventListener("click", () => {
+            console.info('s',selectedAnswerId)
+            if(selectedAnswerId){
+                const oldAnswer =  document.getElementById(selectedAnswerId);
+               oldAnswer.style.color = 'black';
+               oldAnswer.textContent = oldAnswer.textContent.slice(2)
+            }
+            const isCorrectAnswer = answer === currentQuestion.correct;
+            const randEmojiIndex = Math.floor(Math.random()*4)
+            const wrongEmoji = ['🤨','😣','😱','💩']
+            const rightEmoji = ['🎉','😇','🥳','🤩']
+            const emojis = isCorrectAnswer ? rightEmoji : wrongEmoji;
+            li.textContent = emojis[randEmojiIndex]+ ' '+ li.textContent
+            li.style.color = isCorrectAnswer ? 'green' : 'red';
+            selectedAnswerId = itemId;
+            selectAnswer(currentQuestion.question, answer === currentQuestion.correct)
+        });
         answersElement.appendChild(li);
     });
 }
@@ -56,11 +76,14 @@ function resetState() {
     answersElement.innerHTML = "";
 }
 
-function selectAnswer(selectedElement, isCorrect) {
+function selectAnswer(question, isCorrect) {
     Array.from(answersElement.children).forEach((child) => child.classList.add("disabled"));
-    selectedElement.classList.add(isCorrect ? "correct" : "incorrect");
 
-    if (isCorrect) score++;
+    if (isCorrect && !correctAnswers.includes(question)) {
+        correctAnswers.push(question)
+    } else {
+        correctAnswers = correctAnswers.filter(q=>q!==question)
+    }
     nextBtn.classList.remove("hidden");
 }
 
@@ -75,8 +98,9 @@ nextBtn.addEventListener("click", () => {
 
 function endQuiz() {
     questionContainer.classList.add("hidden");
+    nextBtn.className = 'hidden'
     resultContainer.classList.remove("hidden");
-    scoreElement.textContent = `${score} / ${questions.length}`;
+    scoreElement.textContent = `${correctAnswers.length} / ${questions.length}`;
 }
 
 restartBtn.addEventListener("click", fetchQuestions);
