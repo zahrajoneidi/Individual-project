@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz Game</h1>
+        <div id="quiz">
+            <div id="question-container">
+                <h2 id="question">Question will appear here</h2>
+                <ul id="answers">
+                    <!-- Answers will be dynamically generated here -->
+                </ul>
+            </div>
+            <div id="progress-container">
+                <span id="progress-text">Question 1 of 10</span>
+                <div id="progress-bar">
+                    <div id="progress"></div>
+                </div>
+            </div>
+            <button id="next-btn" class="hidden">Next</button>
+        </div>
+        <div id="result" class="hidden">
+            <h2>Quiz Completed!</h2>
+            <p>Your final score is: <span id="score">0</span></p>
+            <button id="restart-btn">Restart Quiz</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
